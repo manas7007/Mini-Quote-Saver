@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Quote Saver</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            margin-top: 0;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #28a745;
+        }
+
+        button#addBtn {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button#addBtn:hover {
+            background-color: #218838;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin: 0;
+        }
+
+        li {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 12px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            word-break: break-word;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>⭐ Mini Quote Saver</h2>
+
+        <div class="input-group">
+            <input type="text" id="quoteInput" placeholder="Type a memorable quote...">
+            <button id="addBtn">Add Quote</button>
+        </div>
+
+        <ul id="quoteList">
+        </ul>
+    </div>
+
+    <script>
+        const quoteInput = document.getElementById('quoteInput');
+        const addBtn = document.getElementById('addBtn');
+        const quoteList = document.getElementById('quoteList');
+        let quotes = JSON.parse(localStorage.getItem('myQuotes')) || [];
+        renderQuotes();
+        addBtn.addEventListener('click', () => {
+            const text = quoteInput.value.trim();
+            if (text) {
+                quotes.push(text);
+                saveAndRender();
+                quoteInput.value = '';
+                quoteInput.focus();
+            } else {
+                alert("Please write a quote first!");
+            }
+        });
+        quoteInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addBtn.click();
+        });
+        function saveAndRender() {
+            localStorage.setItem('myQuotes', JSON.stringify(quotes));
+            renderQuotes();
+        }
+        function renderQuotes() {
+            quoteList.innerHTML = '';
+            quotes.forEach((quote, index) => {
+                const li = document.createElement('li');
+                const textSpan = document.createElement('span');
+                textSpan.textContent = quote;
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.onclick = () => {
+                    deleteQuote(index);
+                };
+                li.appendChild(textSpan);
+                li.appendChild(deleteBtn);
+                quoteList.appendChild(li);
+            });
+        }
+        function deleteQuote(index) {
+            quotes.splice(index, 1);
+            saveAndRender();
+        }
+    </script>
+</body>
+
+</html>
